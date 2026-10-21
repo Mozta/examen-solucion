@@ -39,25 +39,52 @@ export function quitarPlatillo(orden, id) {
 // HU-02-E1, HU-02-E2 (y HU-05, HU-06 cuando llegues a los Should)
 export function agregarPlatillo(orden, platillo) {
   // TODO
-  return orden
+  const yaEsta = orden.items.find((item) => item.id === platillo.id)
+  if (yaEsta){
+    return {
+      ...orden,
+      items: orden.items.map((item) =>
+        item.id === platillo.id ? {...item, cantidad: item.cantidad + 1} : item
+      ),
+    }
+  }
+
+  const nuevo = {
+    id: platillo.id,
+    nombre: platillo.nombre,
+    precio: platillo.precio,
+    cantidad: 1,
+    nota: '',
+  }
+  return { ...orden, items: [...orden.items, nuevo] }
 }
 
 // HU-03
 export function calcularTotal(orden) {
   // TODO
-  return 0
+  return orden.items.reduce((suma, item) => suma + item.precio * item.cantidad, 0)
 }
 
 // HU-04-E2
 export function asignarMesa(orden, valor) {
   // TODO
-  return orden
+  const texto = String(valor).trim()
+  const numero = texto === '' ? NaN : Number(texto)
+  return { ...orden, mesa: Number.isFinite(numero) ? numero : null}
 }
 
 // HU-04-E2, HU-04-E3
 export function validarOrden(orden) {
   // TODO
-  return { valida: false, errores: [] }
+  const errores = []
+  const mesa = orden.mesa
+  if (!Number.isInteger(mesa) || mesa < MESA_MIN || mesa > MESA_MAX){
+    errores.push('MESA_INVALIDA')
+  }
+  if (orden.items.length === 0){
+    errores.push('ORDEN_VACIA')
+  }
+  return { valida: errores.length === 0, errores}
 }
 
 // ---------------------------------------------------------------------------
