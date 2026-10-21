@@ -22,6 +22,8 @@ export default function App() {
   const [orden, setOrden] = useState(crearOrden())
   // TODO: los demás estados que necesites (cargando, mensajes de error, folio...)
   const [cargando, setCargando] = useState(true)
+  const [errores, setErrores] = useState([])
+  const [folio, setFolio] = useState(null)
 
   // TODO HU-01 · RNF-04: cargar el menú UNA sola vez al montar el componente.
   useEffect(() => {
@@ -44,6 +46,18 @@ export default function App() {
     setOrden(asignarMesa(orden, valor))
   }
 
+  async function confirmar() {
+    const { valida, errores: codigos} = validarOrden(orden)
+    if (!valida){
+      setErrores(codigos.map((codigo) => MENSAJES[codigo]))
+      return
+    }
+    setErrores([])
+    const { id } = await guardarOrden(orden)
+    setFolio(id)
+    setOrden(crearOrden())
+  }
+
   return (
     <div className="app">
       <header className="encabezado">
@@ -54,10 +68,18 @@ export default function App() {
       <main className="layout">
         {cargando ? <p>Cargando menú...</p> : <Menu menu={menu} onAgregar={handleAgregar} />}
         
-        <Orden orden={orden} onQuitar={handleQuitar} total={calcularTotal(orden)} onMesa={handleMesa}/>
+        <Orden 
+          orden={orden} 
+          onQuitar={handleQuitar} 
+          total={calcularTotal(orden)} 
+          onMesa={handleMesa}
+          errores={errores}
+          onConfirmar={confirmar}
+        />
+
       </main>
 
-      <Confirmacion folio={null} />
+      <Confirmacion folio={folio} />
     </div>
   )
 }
