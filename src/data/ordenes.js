@@ -3,6 +3,8 @@
 // REGLA DE DISEÑO: este es el ÚNICO archivo de la aplicación (junto con
 // src/firebase.js) que puede importar 'firebase/firestore'.
 import { db } from '../firebase'
+import { addDoc, collection, serverTimestamp } from 'firebase/firestore'
+import { calcularTotal } from '../logic/orden'
 
 // HU-04
 // Recibe la orden actual { mesa, items } y la guarda como un documento nuevo
@@ -10,5 +12,13 @@ import { db } from '../firebase'
 // Regresa { id } con el id del documento creado (es el folio).
 export async function guardarOrden(orden) {
   // TODO
-  throw new Error('guardarOrden no está implementada')
+  const documento = {
+    mesa: orden.mesa,
+    items: orden.items,
+    total: calcularTotal(orden),
+    estado: 'pendiente',
+    creadaEn: serverTimestamp(),
+  }
+  const referencia = await addDoc(collection(db, 'ordenes'), documento)
+  return { id: referencia.id }
 }
