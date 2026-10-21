@@ -40,6 +40,9 @@ export default function App() {
   }
 
   // TODO HU-04 · RNF-02: confirmar la orden.
+  function handleMesa(valor){
+    setOrden(asignarMesa(orden, valor))
+  }
 
   return (
     <div className="app">
@@ -51,7 +54,7 @@ export default function App() {
       <main className="layout">
         {cargando ? <p>Cargando menú...</p> : <Menu menu={menu} onAgregar={handleAgregar} />}
         
-        <Orden orden={orden} onQuitar={handleQuitar} total={calcularTotal(orden)}/>
+        <Orden orden={orden} onQuitar={handleQuitar} total={calcularTotal(orden)} onMesa={handleMesa}/>
       </main>
 
       <Confirmacion folio={null} />
