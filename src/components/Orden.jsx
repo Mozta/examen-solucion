@@ -4,7 +4,7 @@
 //
 // Props: decide tú cuáles necesita y escríbelas aquí.
 //        (Pista: la orden, el total, los mensajes de error y una función por acción.)
-export default function Orden({ orden, onQuitar }) {
+export default function Orden({ orden, onQuitar, total }) {
   return (
     <section aria-label="Orden">
       <h2>Orden</h2>
@@ -19,6 +19,9 @@ export default function Orden({ orden, onQuitar }) {
           </li>
         ))}
       </ul>
+      <p>
+        Total: <span data-testid>${total.toFixed(2)}</span>
+      </p>
     </section>
   )
 }

@@ -51,7 +51,7 @@ export default function App() {
       <main className="layout">
         {cargando ? <p>Cargando menú...</p> : <Menu menu={menu} onAgregar={handleAgregar} />}
         
-        <Orden orden={orden} onQuitar={handleQuitar}/>
+        <Orden orden={orden} onQuitar={handleQuitar} total={calcularTotal(orden)}/>
       </main>
 
       <Confirmacion folio={null} />
