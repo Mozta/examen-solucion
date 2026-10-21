@@ -5,7 +5,15 @@ import { useEffect, useState } from 'react'
 import Menu from './components/Menu'
 import Orden from './components/Orden'
 import Confirmacion from './components/Confirmacion'
-import { crearOrden } from './logic/orden'
+import { 
+  crearOrden,
+  agregarPlatillo,
+  quitarPlatillo,
+  asignarMesa,
+  calcularTotal,
+  validarOrden,
+  MENSAJES,
+} from './logic/orden'
 import { cargarMenu } from './data/menu'
 import { guardarOrden } from './data/ordenes'
 
@@ -13,11 +21,23 @@ export default function App() {
   const [menu, setMenu] = useState([])
   const [orden, setOrden] = useState(crearOrden())
   // TODO: los demás estados que necesites (cargando, mensajes de error, folio...)
+  const [cargando, setCargando] = useState(true)
 
   // TODO HU-01 · RNF-04: cargar el menú UNA sola vez al montar el componente.
+  useEffect(() => {
+    cargarMenu()
+    .then((platillos) => setMenu(platillos))
+    .finally(() => setCargando(false))
+  }, [])
 
   // TODO HU-02, HU-03: manejadores que llamen a las funciones de src/logic/orden.js.
   //       Aquí no se escriben reglas: solo se llaman.
+  function handleAgregar(platillo){
+    setOrden(agregarPlatillo(orden, platillo))
+  }
+  function handleQuitar(id){
+    setOrden(quitarPlatillo(orden, id))
+  }
 
   // TODO HU-04 · RNF-02: confirmar la orden.
 
@@ -29,8 +49,9 @@ export default function App() {
       </header>
 
       <main className="layout">
-        <Menu menu={menu} onAgregar={() => {}} />
-        <Orden orden={orden} />
+        {cargando ? <p>Cargando menú...</p> : <Menu menu={menu} onAgregar={handleAgregar} />}
+        
+        <Orden orden={orden} onQuitar={handleQuitar}/>
       </main>
 
       <Confirmacion folio={null} />
